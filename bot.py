@@ -1,10 +1,12 @@
 import requests
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from webdriver_manager.chrome import ChromeDriverManager
+from selenium.webdriver.chrome.service import Service
 import time
 
-TOKEN = "8769429050:AAHNSzlsX-zjygI8K4gM6d8eqZ72-tQwdW8"
-CHAT_ID = "1788006532"
+TOKEN = "SEU_TOKEN"
+CHAT_ID = "SEU_CHAT_ID"
 
 URLS = {
     "28/10": "https://www.ticketmaster.com.br/event/pre-venda-army-membership-bts-world-tour-arirang-28-10",
@@ -22,15 +24,16 @@ def enviar_telegram(msg):
         pass
 
 options = Options()
-options.binary_location = "/usr/bin/chromium"
 options.add_argument("--headless=new")
 options.add_argument("--no-sandbox")
 options.add_argument("--disable-dev-shm-usage")
 
-driver = webdriver.Chrome(options=options)
+driver = webdriver.Chrome(
+    service=Service(ChromeDriverManager().install()),
+    options=options
+)
 
-# mensagem de startup segura
-enviar_telegram("🤖 Bot BTS online e monitorando ingressos!")
+enviar_telegram("🤖 Bot BTS online!")
 
 def verificar():
     for data, url in URLS.items():
@@ -52,9 +55,5 @@ def verificar():
             print("Erro:", e)
 
 while True:
-    try:
-        verificar()
-        time.sleep(10)
-    except Exception as e:
-        print("Loop error:", e)
-        time.sleep(10)
+    verificar()
+    time.sleep(10)
