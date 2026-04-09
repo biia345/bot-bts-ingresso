@@ -1,6 +1,7 @@
 import requests
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
+from selenium.webdriver.chrome.service import Service
 import time
 
 TOKEN = "8769429050:AAHNSzlsX-zjygI8K4gM6d8eqZ72-tQwdW8"
@@ -19,26 +20,33 @@ def enviar_telegram(msg):
     requests.post(url, data={"chat_id": CHAT_ID, "text": msg})
 
 options = Options()
-options.add_argument("--headless")
+options.binary_location = "/usr/bin/chromium"
+options.add_argument("--headless=new")
+options.add_argument("--no-sandbox")
+options.add_argument("--disable-dev-shm-usage")
 options.add_argument("--disable-blink-features=AutomationControlled")
 
 driver = webdriver.Chrome(options=options)
 
 def verificar():
     for data, url in URLS.items():
-        driver.get(url)
-        time.sleep(5)
+        try:
+            driver.get(url)
+            time.sleep(5)
 
-        page = driver.page_source
+            page = driver.page_source
 
-        disponivel = ("Disponível" in page or "Available" in page)
+            disponivel = ("Disponível" in page or "Available" in page)
 
-        if disponivel and not estado[data]:
-            enviar_telegram(f"🚨 Voltou ingresso BTS dia {data}!\n{url}")
-            estado[data] = True
+            if disponivel and not estado[data]:
+                enviar_telegram(f"🚨 Voltou ingresso BTS dia {data}!\n{url}")
+                estado[data] = True
 
-        if not disponivel:
-            estado[data] = False
+            if not disponivel:
+                estado[data] = False
+
+        except Exception as e:
+            print("Erro:", e)
 
 while True:
     verificar()
