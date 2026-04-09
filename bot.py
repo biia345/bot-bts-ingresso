@@ -28,6 +28,8 @@ options.add_argument("--disable-blink-features=AutomationControlled")
 
 driver = webdriver.Chrome(options=options)
 
+enviar_telegram("🤖 Bot BTS online e monitorando ingressos!")
+
 def verificar():
     for data, url in URLS.items():
         try:
