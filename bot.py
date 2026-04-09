@@ -1,12 +1,10 @@
 import requests
+import time
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
-from webdriver_manager.chrome import ChromeDriverManager
-from selenium.webdriver.chrome.service import Service
-import time
 
-TOKEN = "SEU_TOKEN"
-CHAT_ID = "SEU_CHAT_ID"
+TOKEN = "8769429050:AAHNSzlsX-zjygI8K4gM6d8eqZ72-tQwdW8"
+CHAT_ID = "1788006532"
 
 URLS = {
     "28/10": "https://www.ticketmaster.com.br/event/pre-venda-army-membership-bts-world-tour-arirang-28-10",
@@ -23,17 +21,18 @@ def enviar_telegram(msg):
     except:
         pass
 
+
+# configuração do chromium (necessário no Railway)
 options = Options()
-options.add_argument("--headless=new")
+options.binary_location = "/usr/bin/chromium"
+options.add_argument("--headless")
 options.add_argument("--no-sandbox")
 options.add_argument("--disable-dev-shm-usage")
+options.add_argument("--disable-blink-features=AutomationControlled")
 
-driver = webdriver.Chrome(
-    service=Service(ChromeDriverManager().install()),
-    options=options
-)
+driver = webdriver.Chrome(options=options)
 
-enviar_telegram("🤖 Bot BTS online!")
+enviar_telegram("🤖 Bot BTS online e monitorando ingressos!")
 
 def verificar():
     for data, url in URLS.items():
@@ -42,7 +41,13 @@ def verificar():
             time.sleep(5)
 
             page = driver.page_source
-            disponivel = ("Disponível" in page or "Available" in page)
+
+            disponivel = (
+                "Disponível" in page or
+                "Available" in page or
+                "Comprar" in page or
+                "Buy" in page
+            )
 
             if disponivel and not estado[data]:
                 enviar_telegram(f"🚨 Voltou ingresso BTS dia {data}!\n{url}")
@@ -54,6 +59,11 @@ def verificar():
         except Exception as e:
             print("Erro:", e)
 
+
 while True:
-    verificar()
-    time.sleep(10)
+    try:
+        verificar()
+        time.sleep(10)
+    except Exception as e:
+        print("Erro loop:", e)
+        time.sleep(10)
