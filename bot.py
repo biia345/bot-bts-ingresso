@@ -21,14 +21,10 @@ def enviar_telegram(msg):
     except:
         pass
 
-
-# configuração do chromium (necessário no Railway)
 options = Options()
-options.binary_location = "/usr/bin/chromium"
-options.add_argument("--headless")
+options.add_argument("--headless=new")
 options.add_argument("--no-sandbox")
 options.add_argument("--disable-dev-shm-usage")
-options.add_argument("--disable-blink-features=AutomationControlled")
 
 driver = webdriver.Chrome(options=options)
 
@@ -59,11 +55,6 @@ def verificar():
         except Exception as e:
             print("Erro:", e)
 
-
 while True:
-    try:
-        verificar()
-        time.sleep(10)
-    except Exception as e:
-        print("Erro loop:", e)
-        time.sleep(10)
+    verificar()
+    time.sleep(10)
