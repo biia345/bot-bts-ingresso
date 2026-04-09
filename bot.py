@@ -1,7 +1,6 @@
 import requests
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
-from selenium.webdriver.chrome.service import Service
 import time
 
 TOKEN = "8769429050:AAHNSzlsX-zjygI8K4gM6d8eqZ72-tQwdW8"
@@ -16,18 +15,21 @@ URLS = {
 estado = {data: False for data in URLS}
 
 def enviar_telegram(msg):
-    url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
-    requests.post(url, data={"chat_id": CHAT_ID, "text": msg})
+    try:
+        url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
+        requests.post(url, data={"chat_id": CHAT_ID, "text": msg})
+    except:
+        pass
 
 options = Options()
 options.binary_location = "/usr/bin/chromium"
 options.add_argument("--headless=new")
 options.add_argument("--no-sandbox")
 options.add_argument("--disable-dev-shm-usage")
-options.add_argument("--disable-blink-features=AutomationControlled")
 
 driver = webdriver.Chrome(options=options)
 
+# mensagem de startup segura
 enviar_telegram("🤖 Bot BTS online e monitorando ingressos!")
 
 def verificar():
@@ -37,7 +39,6 @@ def verificar():
             time.sleep(5)
 
             page = driver.page_source
-
             disponivel = ("Disponível" in page or "Available" in page)
 
             if disponivel and not estado[data]:
@@ -51,5 +52,9 @@ def verificar():
             print("Erro:", e)
 
 while True:
-    verificar()
-    time.sleep(10)
+    try:
+        verificar()
+        time.sleep(10)
+    except Exception as e:
+        print("Loop error:", e)
+        time.sleep(10)
