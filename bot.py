@@ -2,7 +2,7 @@ import requests
 import time
 
 TOKEN = "8769429050:AAHNSzlsX-zjygI8K4gM6d8eqZ72-tQwdW8"
-CHAT_ID = "1788006532"
+CHAT_ID = "-1003838454435"
 
 EVENTOS = {
     "28/10": "pre-venda-army-membership-bts-world-tour-arirang-28-10",
