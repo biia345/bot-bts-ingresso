@@ -29,20 +29,21 @@ def verificar():
     for data, url in URLS.items():
         try:
             r = requests.get(url, headers=headers, timeout=10)
-            page = r.text
+            page = r.text.lower()
 
-            disponivel = (
-                "Disponível" in page or
-                "Available" in page or
-                "Comprar" in page or
-                "Buy" in page
+            # só considera disponível se NÃO tiver termos de esgotado
+            indisponivel = (
+                "esgotado" in page or
+                "sold out" in page or
+                "indisponível" in page or
+                "unavailable" in page
             )
 
-            if disponivel and not estado[data]:
-                enviar_telegram(f"🚨 Voltou ingresso BTS dia {data}!\n{url}")
+            if not indisponivel and not estado[data]:
+                enviar_telegram(f"🚨 POSSÍVEL ingresso BTS dia {data}!\n{url}")
                 estado[data] = True
 
-            if not disponivel:
+            if indisponivel:
                 estado[data] = False
 
         except Exception as e:
