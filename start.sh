@@ -1,7 +1,6 @@
 #!/bin/bash
 
 apt-get update
-apt-get install -y chromium-browser
-apt-get install -y chromium-chromedriver
+apt-get install -y chromium chromium-driver
 
 python bot.py
