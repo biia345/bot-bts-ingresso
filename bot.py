@@ -1,7 +1,5 @@
 import requests
 import time
-from selenium import webdriver
-from selenium.webdriver.chrome.options import Options
 
 TOKEN = "8769429050:AAHNSzlsX-zjygI8K4gM6d8eqZ72-tQwdW8"
 CHAT_ID = "1788006532"
@@ -21,22 +19,17 @@ def enviar_telegram(msg):
     except:
         pass
 
-options = Options()
-options.add_argument("--headless=new")
-options.add_argument("--no-sandbox")
-options.add_argument("--disable-dev-shm-usage")
-
-driver = webdriver.Chrome(options=options)
+headers = {
+    "User-Agent": "Mozilla/5.0"
+}
 
 enviar_telegram("🤖 Bot BTS online e monitorando ingressos!")
 
 def verificar():
     for data, url in URLS.items():
         try:
-            driver.get(url)
-            time.sleep(5)
-
-            page = driver.page_source
+            r = requests.get(url, headers=headers, timeout=10)
+            page = r.text
 
             disponivel = (
                 "Disponível" in page or
